@@ -82,6 +82,43 @@ app.post('/cadastrarProduto', function(req, res){
   res.redirect('/cadastrarProduto');
 });
 
+app.get('/removerProduto/:id&:imagem', function(req, res){
+  const resposta = produtoController.removerProduto(req.params.id, req.params.imagem);
+
+  resposta.then(resp => {
+    res.redirect('/cadastrarProduto');
+  })
+})
+
+app.get('/alterarProduto/:id', function(req, res){
+  const resposta = produtoController.consultarProduto(req.params.id);
+
+  resposta.then(resp => {
+    if(resp){
+      res.render('edicaoProduto', {produto:resp});
+    }else{
+      res.redirect('/cadastrarProduto');
+    }
+  })
+})
+
+app.post('/alterarProduto', function(req, res){
+  let edicao_produto;
+
+  try{
+    edicao_produto = new produto(req.body.nome, req.body.valor, req.files.imagem, req.body.id_produto)
+  }catch(erro){
+    edicao_produto = new produto(req.body.nome, req.body.valor, null, req.body.id_produto)
+  }
+  
+  const resultado = produtoController.atualizarProduto(edicao_produto, req.body.imagemAntiga);
+
+  resultado.then(resp => {
+    res.redirect('/cadastrarProduto')
+  })
+  
+})
+
 app.listen(port, () => {
   console.log(`Servidor rodando na porta ${port}...`);
 });

@@ -10,8 +10,10 @@ app.use('/bootstrap', express.static('./node_modules/bootstrap/dist'))
 
 const usuarioController = require('./controller/usuario.controller');
 const produtoController = require('./controller/produto.controller');
+const vendaController = require('./controller/venda.controller')
 const usuario = require('./entidades/usuario');
 const produto = require('./entidades/produto');
+const venda = require ('./entidades/venda')
 const email = require('./config/email');
 
 //Configuração do Handlebars (necessário a partir da rota #2)
@@ -117,6 +119,27 @@ app.post('/alterarProduto', function(req, res){
     res.redirect('/cadastrarProduto')
   })
   
+})
+
+app.get('/comprarProduto/:id', async function(req, res){
+
+  const [produto, lista_usuarios] = await Promise.all([
+    produtoController.consultarProduto(req.params.id),
+    usuarioController.listarUsuarios()
+  ])
+
+  res.render('comprarProduto', {produto:produto, usuario:lista_usuarios})
+
+})
+
+app.post('/comprarProduto', function(req, res){
+  const nova_venda = new venda(req.body.id_produto, req.body.id_usuario, req.body.valor)
+
+  const resultado = vendaController.cadastrarVenda(nova_venda)
+
+  resultado.then(resp=> {
+    res.redirect('/cadastrarProduto')
+  })
 })
 
 app.listen(port, () => {

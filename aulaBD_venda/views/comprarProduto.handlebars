@@ -1,0 +1,20 @@
+<form action="/comprarProduto" method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="id_produto" value="{{produto.id_produto}}">
+
+    <img src="../imagens/{{produto.id_produto}}.{{produto.imagem}}" style="height: 200px;">
+
+    <p>Nome do Produto: </p>
+    <input type="text" name="nome" value="{{produto.nome}}" readonly>
+    <p>Valor: </p>
+    <input type="number" name="valor" value="{{produto.valor}}" readonly>
+
+    <p>Cliente</p>
+    <select name="id_usuario">
+        {{#each usuario}}
+            <option value="{{this.id_usuario}}">{{this.nome}}</option>
+        {{/each}}
+    </select>
+    
+    <button type="submit">Comprar</button>
+    <a href="/cadastrarProduto" class="btn btn-secondary">Cancelar</a>
+</form>
